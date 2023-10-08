@@ -38,7 +38,7 @@ int mouseX, mouseY;
 int size = 1000;
 static int day = 0;
 
-GLuint tbg, tsun, trect, tflag;
+GLuint bg_texture, sun_texture, earth_texture, rect_texture, drawing_texture, table_texture;
 
 //--------------------------------------------------------------------------
 //Loading texture files, which can also be found at http://www.cppblog.com/doing5552/archive/2009/01/08/71532.aspx
@@ -157,10 +157,13 @@ GLuint LoadTexture(const char* filename)
 void init_LoadallTexture()
 {
     // D:\\__Ongoing Trimester\\Computer Graphics\\solar-system-redone\\pictures\\bg.bmp
-    tsun = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\solar-system-redone\\pictures\\sol.bmp");
-    tbg = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\bg2.bmp");
-    trect = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\frontWall.bmp");
-    tflag = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\flag-malaysia.bmp");
+    sun_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\sol.bmp");
+    earth_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\terra.bmp");
+    bg_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\bg2.bmp");
+    rect_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\frontWall.bmp");
+    drawing_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\jupiter.bmp");
+    table_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\SideWalls.bmp");
+   // tflag = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\flag-malaysia.bmp");
 }
 //--------------------------------------------------------------------------
 
@@ -204,7 +207,7 @@ void get_bg()
     sphere = gluNewQuadric();
     glEnable(GL_TEXTURE_2D);
     gluQuadricDrawStyle(sphere, GLU_FILL);
-    glBindTexture(GL_TEXTURE_2D, tbg);
+    glBindTexture(GL_TEXTURE_2D, bg_texture);
     gluQuadricTexture(sphere, GL_TRUE);
     gluQuadricNormals(sphere, GLU_SMOOTH);
     gluSphere(sphere,30, 100, 20);
@@ -253,12 +256,49 @@ void get_sun()
     sphere = gluNewQuadric();
     glEnable(GL_TEXTURE_2D);
     gluQuadricDrawStyle(sphere, GLU_FILL);
-    glBindTexture(GL_TEXTURE_2D, tsun);
+    glBindTexture(GL_TEXTURE_2D, sun_texture);
     gluQuadricTexture(sphere, GL_TRUE);
     gluQuadricNormals(sphere, GLU_SMOOTH);
-    // gluSphere(sphere,30, 100, 20);
+
+    gluSphere(sphere, 0.6, 100, 20);
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+}
+
+void get_earth()
+{
+
+    glPushMatrix();
+   // glRotatef(day / 360.0 * 360, 0.0f, 0.0f, -1.0f);
+  //  glTranslatef(3 * Distance, 0.0f, 0.0f);
+
+    // {
+    //     GLfloat earth_mat_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    //     GLfloat earth_mat_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    //     GLfloat earth_mat_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    //     GLfloat earth_mat_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    //     GLfloat earth_mat_shininess = 0.0f;
+
+    //     glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat_ambient);
+    //     glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat_diffuse);
+    //     glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat_specular);
+    //     glMaterialfv(GL_FRONT, GL_EMISSION, earth_mat_emission);
+    //     glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+    //     /*glutSolidSphere(15945000, 20, 20);*/
+
+    // }
+    GLUquadricObj* sphere = NULL;
+    sphere = gluNewQuadric();
+    glEnable(GL_TEXTURE_2D);
+    gluQuadricDrawStyle(sphere, GLU_FILL);
+
+    glBindTexture(GL_TEXTURE_2D, earth_texture);
+    gluQuadricTexture(sphere, GL_TRUE);
+    gluQuadricNormals(sphere, GLU_SMOOTH);
     gluSphere(sphere, 0.4, 100, 20);
     glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_LIGHT0);
+    //glDisable(GL_LIGHTING);
     glPopMatrix();
 }
 
@@ -428,7 +468,7 @@ void drawSatellite(){
         // Create the closed cylinder
         // Enable texturing
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tflag);
+        glBindTexture(GL_TEXTURE_2D, drawing_texture);
         GLUquadricObj *quadric = gluNewQuadric();
         gluQuadricDrawStyle(quadric, GLU_FILL); // Set draw style to fill
         gluCylinder(quadric, 1.0, 1.0, 4.0, 40, 60);
@@ -454,8 +494,245 @@ void drawSatellite(){
     glPopMatrix();
 }
 
-//--------------------------------------------------------------------------
-// Add code here
+void mySolidCylinder(GLdouble radius, GLdouble height, GLint slices, GLint stacks)
+{
+    GLUquadricObj *quadric = gluNewQuadric();
+    gluQuadricDrawStyle(quadric, GLU_FILL); // Set draw style to fill
+    gluCylinder(quadric, radius, radius, height, slices, stacks);
+    gluDeleteQuadric(quadric);
+}
+
+void drawDoor(){
+    glPushMatrix();
+        glColor3f(1.0, 1.0, 1.0);
+        glTranslatef(0.0, 0.0, 0.0);
+        glScalef(2.5, 4.0, 0.5);
+
+        // Enable texturing
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, rect_texture);
+
+        // Manually draw the cube
+        glBegin(GL_QUADS);
+            // Front face (with texture)
+            glTexCoord2f(0.0, 0.0); glVertex3f(-0.5, -0.5, 0.5);
+            glTexCoord2f(1.0, 0.0); glVertex3f( 0.5, -0.5, 0.5);
+            glTexCoord2f(1.0, 1.0); glVertex3f( 0.5,  0.5, 0.5);
+            glTexCoord2f(0.0, 1.0); glVertex3f(-0.5,  0.5, 0.5);
+
+
+            glVertex3f(-0.5, -0.5, -0.5);
+            glVertex3f( 0.5, -0.5, -0.5);
+            glVertex3f( 0.5,  0.5, -0.5);
+            glVertex3f(-0.5,  0.5, -0.5);
+
+
+            glVertex3f(-0.5, -0.5,  0.5);
+            glVertex3f(-0.5, -0.5, -0.5);
+            glVertex3f(-0.5,  0.5, -0.5);
+            glVertex3f(-0.5,  0.5,  0.5);
+
+
+            glVertex3f( 0.5, -0.5,  0.5);
+            glVertex3f( 0.5, -0.5, -0.5);
+            glVertex3f( 0.5,  0.5, -0.5);
+            glVertex3f( 0.5,  0.5,  0.5);
+
+
+            glVertex3f(-0.5,  0.5,  0.5);
+            glVertex3f( 0.5,  0.5,  0.5);
+            glVertex3f( 0.5,  0.5, -0.5);
+            glVertex3f(-0.5,  0.5, -0.5);
+
+
+            glVertex3f(-0.5, -0.5,  0.5);
+            glVertex3f( 0.5, -0.5,  0.5);
+            glVertex3f( 0.5, -0.5, -0.5);
+            glVertex3f(-0.5, -0.5, -0.5);
+        glEnd();
+
+        // Disable texturing
+        glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+}
+
+void lockStructure(){
+    // intermediate cube
+    glPushMatrix();
+        glColor3f(0.5, 0.5, 0.5);
+        glTranslatef(1.0, 0.0, 0.28);
+        glScalef(0.375, 0.25, 0.25);
+        glutSolidCube(1.0);
+    glPopMatrix();
+
+    // the cylinder
+    glPushMatrix();
+        glColor3f(0.5, 0.5, 0.4);
+        glTranslatef(1.0, 0.0, 0.275);
+        mySolidCylinder(0.07, 0.375, 20, 20);
+    glPopMatrix();
+
+    // the hand
+    glPushMatrix();
+        glColor3f(0.5, 0.5, 0.3);
+        glTranslatef(0.77, 0.0, 0.685);
+        glScalef(0.55, 0.125, 0.05);
+        glutSolidCube(1.0);
+    glPopMatrix();
+}
+
+// Function to draw a rectangle with specified width, height, and depth
+void drawRectangularSurface(double width, double height, double depth)
+{
+    double halfWidth = width / 2.0;
+    double halfHeight = height / 2.0;
+    double halfDepth = depth / 2.0;
+
+    // Enable texturing
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, table_texture);
+
+    glBegin(GL_QUADS);
+    // Bottom face
+    glTexCoord2f(0.0, 0.0); glVertex3f(-halfWidth, -0.1, -halfDepth);
+    glTexCoord2f(1.0, 0.0); glVertex3f(halfWidth, -0.1, -halfDepth);
+    glTexCoord2f(1.0, 1.0); glVertex3f(halfWidth, -0.1, halfDepth);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-halfWidth, -0.1, halfDepth);
+
+    // Top face
+    glTexCoord2f(0.0, 0.0); glVertex3f(-halfWidth, height - 0.1, -halfDepth);
+    glTexCoord2f(1.0, 0.0); glVertex3f(halfWidth, height - 0.1, -halfDepth);
+    glTexCoord2f(1.0, 1.0); glVertex3f(halfWidth, height - 0.1, halfDepth);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-halfWidth, height - 0.1, halfDepth);
+
+    // Front face
+    glTexCoord2f(0.0, 0.0); glVertex3f(-halfWidth, -0.1, -halfDepth);
+    glTexCoord2f(1.0, 0.0); glVertex3f(halfWidth, -0.1, -halfDepth);
+    glTexCoord2f(1.0, 1.0); glVertex3f(halfWidth, height - 0.1, -halfDepth);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-halfWidth, height - 0.1, -halfDepth);
+
+    // Back face
+    glTexCoord2f(0.0, 0.0); glVertex3f(-halfWidth, -0.1, halfDepth);
+    glTexCoord2f(1.0, 0.0); glVertex3f(halfWidth, -0.1, halfDepth);
+    glTexCoord2f(1.0, 1.0); glVertex3f(halfWidth, height - 0.1, halfDepth);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-halfWidth, height - 0.1, halfDepth);
+
+    // Left face
+    glVertex3f(-halfWidth, -0.1, -halfDepth);
+    glVertex3f(-halfWidth, -0.1, halfDepth);
+    glVertex3f(-halfWidth, height - 0.1, halfDepth);
+    glVertex3f(-halfWidth, height - 0.1, -halfDepth);
+
+    // Right face
+    glVertex3f(halfWidth, -0.1, -halfDepth);
+    glVertex3f(halfWidth, -0.1, halfDepth);
+    glVertex3f(halfWidth, height - 0.1, halfDepth);
+    glVertex3f(halfWidth, height - 0.1, -halfDepth);
+
+    glEnd();
+    // Disable texturing
+    glDisable(GL_TEXTURE_2D);
+}
+
+void tableDrawing(){
+
+// Draw the table top (a rectangle)
+    glPushMatrix(); // Save the current matrix for the table top
+    glTranslatef(0.0, 0.55, 0.0); // Translate the table top above the legs
+    drawRectangularSurface(4.0, 0.1, 1.25);
+    glPopMatrix(); // Restore the matrix for the table top
+
+
+    glPushMatrix(); // Save the current matrix for the first leg
+    glColor3f(0.9373f, 0.9373f, 0.9373f); // Set the color for the legs
+    glTranslatef(1.65, 0.5, 0.4); // Position the first leg
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+    mySolidCylinder(0.1, 1.25, 20, 20); // Draw the first leg
+    glPopMatrix(); // Restore the matrix for the first leg
+
+    glPushMatrix(); // Save the current matrix for the second leg
+    glColor3f(0.9373f, 0.9373f, 0.9373f); // Set the color for the legs
+    glTranslatef(1.65, 0.5, -0.4); // Position the second leg
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+    mySolidCylinder(0.1, 1.25, 20, 20); // Draw the second leg
+    glPopMatrix(); // Restore the matrix for the second leg
+
+    glPushMatrix(); // Save the current matrix for the third leg
+    glColor3f(0.9373f, 0.9373f, 0.9373f); // Set the color for the legs
+    glTranslatef(-1.65, 0.5, 0.4); // Position the third leg
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+    mySolidCylinder(0.1, 1.25, 20, 20); // Draw the third leg
+    glPopMatrix(); // Restore the matrix for the third leg
+
+    glPushMatrix(); // Save the current matrix for the fourth leg
+    glColor3f(0.9373f, 0.9373f, 0.9373f); // Set the color for the legs
+    glTranslatef(-1.65, 0.5, -0.4); // Position the fourth leg
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    mySolidCylinder(0.1, 1.25, 20, 20); // Draw the fourth leg
+    glPopMatrix(); // Restore the matrix for the fourth leg
+
+}
+
+// Chair drawing
+void chairDrawing(){
+    // drawing the chair back
+    glPushMatrix();
+    glTranslatef(0.0, 0.15, 2.1);
+    glColor3f(0.5, 0.5, 0.5);
+    glScalef(1.0, 1.5, 0.05);
+
+    drawRectangularSurface(1.0, 1.0, 1.0);
+    glPopMatrix();
+
+    // drawing the chair base
+    glPushMatrix();
+    glColor3f(0.5, 0.5, 0.5);
+    glTranslatef(0.0, 0.0, 1.5);
+    glScalef(1.0, 0.05, 1.25);
+    drawRectangularSurface(1.0, 1.0, 1.0);
+    glPopMatrix();
+
+    // drawing legs
+    // first leg
+    glPushMatrix();
+    glColor3f(0.0, 0.0, 0.0);
+    glTranslatef(0.35, 0.0, 2.0); // x not z
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glScalef(0.4, 0.4, 0.4);
+    mySolidCylinder(0.1, 2.5, 20, 20);
+    glPopMatrix();
+
+
+    // second leg
+    glPushMatrix();
+    glColor3f(0.0, 0.0, 0.0);
+    glTranslatef(0.35, 0.0, 1.0);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glScalef(0.4, 0.4, 0.4);
+    mySolidCylinder(0.1, 2.5, 20, 20);
+    glPopMatrix();
+
+
+    // third leg
+    glPushMatrix();
+    glColor3f(0.0, 0.0, 0.0);
+    glTranslatef(-0.35, 0.0, 2.0);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glScalef(0.4, 0.4, 0.4);
+    mySolidCylinder(0.1, 2.5, 20, 20);
+    glPopMatrix();
+
+
+    // fourth leg
+    glPushMatrix();
+    glColor3f(0.0, 0.0, 0.0);
+    glTranslatef(-0.35, 0.0, 1.0);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glScalef(0.4, 0.4, 0.4);
+    mySolidCylinder(0.1, 2.5, 20, 20);
+    glPopMatrix();
+}
+
 void myDisplayFunc(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -473,12 +750,32 @@ void myDisplayFunc(void)
         get_bg();
         //renderElephant();
 
-        drawSatellite();
+        glPushMatrix();
+            glTranslatef(5.0, 5.0, 0.0); 
+            drawSatellite();
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(-10.0, 0.0, 0.0);
+            drawDoor();
+            lockStructure();
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(10.0, 0.0, 0.0);
+            tableDrawing();
+            chairDrawing();
+        glPopMatrix();
        // renderTiger();
 
         // Render the axes
-        MyModelAxis();
-        get_sun();
+        //MyModelAxis();
+        glPushMatrix();
+            glTranslatef(0.0, 0.0, 2.0);
+            get_sun();
+        glPopMatrix();
+
+        get_earth();
 
     glPopMatrix(); // Restore the matrix
 
@@ -625,7 +922,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(windowWidth, windowHeight);
-    glutCreateWindow("Lego");
+    glutCreateWindow("Computer Graphics Fundamentals | G9 | Dr Ng Kok Why");
 
     init_LoadallTexture();
     myInit();
