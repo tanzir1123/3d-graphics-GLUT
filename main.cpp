@@ -265,10 +265,13 @@ void get_sun()
     glPopMatrix();
 }
 
+float _angle_earth = 30.0; 
+
 void get_earth()
 {
 
     glPushMatrix();
+    glRotatef(_angle_earth, 0.0f, 1.0f, 0.0f);
    // glRotatef(day / 360.0 * 360, 0.0f, 0.0f, -1.0f);
   //  glTranslatef(3 * Distance, 0.0f, 0.0f);
 
@@ -301,6 +304,7 @@ void get_earth()
     //glDisable(GL_LIGHTING);
     glPopMatrix();
 }
+
 
 struct Vertex
 {
@@ -906,6 +910,17 @@ void myMotionFunc(int x, int y)
     }
 }
 //--------------------------------------------------------------------------
+void update(int value) {
+	_angle_earth += 2.0f;
+	if (_angle_earth > 360) {
+		_angle_earth -= 360;
+	}
+
+	glutPostRedisplay(); ////Tell GLUT that the scene has changed
+	glutTimerFunc(25, update, 0);
+}
+
+
 int main(int argc, char **argv)
 {
 
@@ -934,6 +949,8 @@ int main(int argc, char **argv)
     glutSpecialFunc(mySpecialFunc);
     glutMotionFunc(myMotionFunc);
     glutMouseFunc(myMouseFunc);
+
+    glutTimerFunc(25, update, 0); //Timer for animation
 
     glutMainLoop(); // Display everything and wait
     return 0;
