@@ -38,7 +38,7 @@ int mouseX, mouseY;
 int size = 1000;
 static int day = 0;
 
-GLuint tbg, tsun;
+GLuint tbg, tsun, trect, tflag;
 
 //--------------------------------------------------------------------------
 //Loading texture files, which can also be found at http://www.cppblog.com/doing5552/archive/2009/01/08/71532.aspx
@@ -159,6 +159,8 @@ void init_LoadallTexture()
     // D:\\__Ongoing Trimester\\Computer Graphics\\solar-system-redone\\pictures\\bg.bmp
     tsun = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\solar-system-redone\\pictures\\sol.bmp");
     tbg = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\bg2.bmp");
+    trect = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\frontWall.bmp");
+    tflag = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\flag-malaysia.bmp");
 }
 //--------------------------------------------------------------------------
 
@@ -167,7 +169,7 @@ void get_bg()
 
     glPushMatrix();
     //glRotatef(day/25.0*360, 0.0, 0.0, -1.0);
-   // glTranslatef(10.0f, 10.0f, -20.0f); 
+   // glTranslatef(10.0f, 10.0f, -20.0f);
     // {
     //     GLfloat sun_light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     //     GLfloat sun_light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -216,7 +218,7 @@ void get_sun()
 {
     glPushMatrix();
     //glRotatef(day/25.0*360, 0.0, 0.0, -1.0);
-   // glTranslatef(10.0f, 10.0f, -20.0f); 
+   // glTranslatef(10.0f, 10.0f, -20.0f);
     {
         GLfloat sun_light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
         GLfloat sun_light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -415,6 +417,42 @@ void renderTiger(){
     glPopMatrix(); // Restore the matrix to the global transformations state
 }
 
+void drawSatellite(){
+
+    glPushMatrix();
+        glScalef(0.3,0.3,0.3);
+        glTranslatef(0.0, 0.0, 10.0);
+        // Draw Satellite: One closed cylinder and two rectangular plates
+        glColor3f(0.8509f, 0.8509f, 0.8509f); // Set color to red
+
+        // Create the closed cylinder
+        // Enable texturing
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, tflag);
+        GLUquadricObj *quadric = gluNewQuadric();
+        gluQuadricDrawStyle(quadric, GLU_FILL); // Set draw style to fill
+        gluCylinder(quadric, 1.0, 1.0, 4.0, 40, 60);
+        gluDeleteQuadric(quadric);
+        glDisable(GL_TEXTURE_2D);
+
+        // Create the rectangular plates
+        glColor3f(0.0157f, 0.2118f, 0.2902f); // Set color to green
+        glPushMatrix();
+        glTranslatef(0.0, 2.0, 2); // Translate to the top of the cylinder
+        glRotatef(90, 0, 0, 1);
+        glScalef(2.5, 0.1, 1); // Scale to create the first rectangular plate
+        glutSolidCube(2.0);
+        glPopMatrix();
+
+        glColor3f(0.0157f, 0.2118f, 0.2902f); // Set color to blue
+        glPushMatrix();
+        glTranslatef(0.0, -2.0, 2); // Translate to the bottom of the cylinder
+        glRotatef(90.0, 0.0, 0.0, 1);
+        glScalef(2.5, 0.1, 1); // Scale to create the second rectangular plate
+        glutSolidCube(2.0);
+        glPopMatrix();
+    glPopMatrix();
+}
 
 //--------------------------------------------------------------------------
 // Add code here
@@ -422,9 +460,9 @@ void myDisplayFunc(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    
+
     glPushMatrix(); // Save the current matrix
-        
+
         // Apply transformations
         glTranslatef(posX, posY, posZ);
         glRotatef(rotateX, 1.0, 0.0, 0.0);
@@ -434,12 +472,12 @@ void myDisplayFunc(void)
 
         get_bg();
         //renderElephant();
-        
 
-        renderTiger();
+        drawSatellite();
+       // renderTiger();
 
         // Render the axes
-        //MyModelAxis();
+        MyModelAxis();
         get_sun();
 
     glPopMatrix(); // Restore the matrix
@@ -579,8 +617,8 @@ int main(int argc, char **argv)
     // parsePLY(file_elephant, vertices_elephant);
 
     // Load the tiger
-    std::string file_tiger= "D:\\__Ongoing Trimester\\Computer Graphics\\Projects\\Tiger\\tiger-point-cloud-text.ply";
-    parsePLY(file_tiger, vertices_tiger);
+    // std::string file_tiger= "D:\\__Ongoing Trimester\\Computer Graphics\\Projects\\Tiger\\tiger-point-cloud-text.ply";
+    // parsePLY(file_tiger, vertices_tiger);
 
     glutInit(&argc, argv);
 
