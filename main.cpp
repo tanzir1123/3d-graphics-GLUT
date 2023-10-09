@@ -225,10 +225,12 @@ float _mars_angle_self = 0.0f;
 float dis_mars_sun = 6.0f;
 float _mars_angle_orbit = 0.0f;
 
+float self_rotation_speed = 1.0f;
+
 void drawSun()
 {
     glPushMatrix();
-    
+
     glRotatef(_sun_angle_self, 0.0, 1.0, 0.0);
 
     {
@@ -304,9 +306,9 @@ void drawMars()
 {
 
     glPushMatrix();
-    
+
     glRotatef(_mars_angle_orbit, 0.0, 1.0, 0.0);
-    
+
     glTranslatef(dis_mars_sun, 0.0, 0.0);
     glRotatef(_mars_angle_self, 0.0, 1.0, 0.0);
 
@@ -821,7 +823,14 @@ void myKeyboardFunc(unsigned char key, int x, int y)
 {
     switch (key)
     {
-
+    case 'i':
+        self_rotation_speed += 0.3;
+        break;
+    case 'd':
+        self_rotation_speed -= 0.3;
+        if (self_rotation_speed < 0.1f)  // Avoid negative speeds
+            self_rotation_speed = 0.1f;
+        break;
     case 27:
         exit(1);
         break;
@@ -929,18 +938,18 @@ void update(int value) {
     _earth_angle_orbit += 0.5f;  // Adjust this to change Earth's orbital speed
     if (_earth_angle_orbit > 360) _earth_angle_orbit -= 360;
 
-    _earth_angle_self += 1.0f;  // Adjust this to change Earth's self-rotation speed
+    _earth_angle_self += self_rotation_speed;  // Adjust this to change Earth's self-rotation speed
     if (_earth_angle_self > 360) _earth_angle_self -= 360;
 
-    _sun_angle_self += 1.0f;
+    _sun_angle_self += self_rotation_speed;
     if (_sun_angle_self > 360) _sun_angle_self -= 360;
 
-    _mars_angle_self += 0.8f;
+    _mars_angle_self += self_rotation_speed;
     if (_mars_angle_self > 360) _mars_angle_self -= 360;
 
     _mars_angle_orbit += 0.3f;
     if (_mars_angle_orbit > 360) _mars_angle_orbit -= 360;
-    
+
     glutPostRedisplay(); // Request a redraw of the window
     glutTimerFunc(25, update, 0);  // Reset the timer 25 miliseconds
 }
