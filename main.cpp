@@ -42,7 +42,7 @@ static int day = 0;
 
 bool isFogEnabled = false;
 
-GLuint bg_texture, sun_texture, earth_texture, mars_texture, star_texture,
+GLuint bg_texture, sun_texture, earth_texture, mars_texture, jupiter_texture, star_texture,
 flag_texture, rect_texture, drawing_texture, table_texture, ufo_texture;
 
 //--------------------------------------------------------------------------
@@ -151,6 +151,7 @@ void init_LoadallTexture()
     sun_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\sun.bmp");
     earth_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\earth.bmp");
     mars_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\mars.bmp");
+    jupiter_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\jupiter.bmp");
     bg_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\mybg.bmp");
     rect_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\frontWall.bmp");
     drawing_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\draw.bmp");
@@ -165,36 +166,35 @@ void get_bg()
 {
 
     glPushMatrix();
-    // glRotatef(day/25.0*360, 0.0, 0.0, -1.0);
-    // glTranslatef(10.0f, 10.0f, -20.0f);
-    // {
-    //     GLfloat sun_light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    //     GLfloat sun_light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    //     GLfloat sun_light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    //     GLfloat sun_light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    //     glLightfv(GL_LIGHT0, GL_POSITION, sun_light_position);
-    //     glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_ambient);
-    //     glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse);
-    //     glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular);
+    {
+        GLfloat sun_light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat sun_light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat sun_light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        GLfloat sun_light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    //     glEnable(GL_LIGHT0);
-    //     glEnable(GL_LIGHTING);
+        glLightfv(GL_LIGHT0, GL_POSITION, sun_light_position);
+        glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_ambient);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular);
 
-    // }
-    // {
-    //     GLfloat sun_mat_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    //     GLfloat sun_mat_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    //     GLfloat sun_mat_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    //     GLfloat sun_mat_emission[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    //     GLfloat sun_mat_shininess = 0.0f;
+        glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHTING);
 
-    //     glMaterialfv(GL_FRONT, GL_AMBIENT, sun_mat_ambient);
-    //     glMaterialfv(GL_FRONT, GL_DIFFUSE, sun_mat_diffuse);
-    //     glMaterialfv(GL_FRONT, GL_SPECULAR, sun_mat_specular);
-    //     glMaterialfv(GL_FRONT, GL_EMISSION, sun_mat_emission);
-    //     glMaterialf(GL_FRONT, GL_SHININESS, sun_mat_shininess);
-    // }
+    }
+    {
+        GLfloat sun_mat_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+        GLfloat sun_mat_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+        GLfloat sun_mat_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat sun_mat_emission[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+        GLfloat sun_mat_shininess = 0.0f;
+
+        glMaterialfv(GL_FRONT, GL_AMBIENT, sun_mat_ambient);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, sun_mat_diffuse);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, sun_mat_specular);
+        glMaterialfv(GL_FRONT, GL_EMISSION, sun_mat_emission);
+        glMaterialf(GL_FRONT, GL_SHININESS, sun_mat_shininess);
+    }
 
     GLUquadricObj *sphere = NULL;
     sphere = gluNewQuadric();
@@ -216,6 +216,10 @@ float _sun_angle_self = 0.0f;
 float _mars_angle_self = 0.0f;
 float dis_mars_sun = 6.0f;
 float _mars_angle_orbit = 0.0f;
+float dis_jupiter_sun = 8.0f;
+float _jupiter_angle_orbit = 0.0f;
+float _jupiter_angle_self = 0.0f;
+
 
 float self_rotation_speed = 1.0f;
 
@@ -448,6 +452,7 @@ void renderElephant()
     glTranslatef(elephantPosX, elephantPosY, elephantPosZ); // Set the position for the elephant
     glColor3f(1.0, 1.0, 1.0);
     glScalef(10.0, 10.0, 10.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
     glBegin(GL_POINTS);
     for (const auto &v : vertices_elephant)
     {
@@ -463,7 +468,8 @@ void renderTiger()
     // Tiger-specific transformations and rendering
     glPushMatrix();
     glTranslatef(tigerPosX, tigerPosY, tigerPosZ); // Set the position for the tiger
-    glScalef(10.0, 10.0, 10.0);                    // Adjust scale if needed
+    glScalef(15.0, 15.0, 15.0);                    // Adjust scale if needed
+    glColor3f(1.0, 0.0, 1.0);
     glBegin(GL_POINTS);
     for (const auto &v : vertices_tiger)
     {
@@ -962,6 +968,30 @@ void draw3DFilledTrapezoid(float topWidth, float bottomWidth, float height, floa
     }
 }
 
+void drawJupiter()
+{
+    glPushMatrix();
+    glRotatef(_jupiter_angle_orbit, 0.0, 1.0, 0.0);
+
+    glTranslatef(dis_jupiter_sun, 0.0, 0.0);
+
+    glRotatef(_jupiter_angle_self, 0.0, 1.0, 0.0);
+
+
+    GLUquadricObj* sphere = NULL;
+    sphere = gluNewQuadric();
+    glEnable(GL_TEXTURE_2D);
+    gluQuadricDrawStyle(sphere, GLU_FILL);
+
+    glBindTexture(GL_TEXTURE_2D, jupiter_texture);
+    gluQuadricTexture(sphere, GL_TRUE);
+    gluQuadricNormals(sphere, GLU_SMOOTH);
+    gluSphere(sphere, 0.5, 100, 20);
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+}
+
 void drawStar()
 {
     glPushMatrix();
@@ -995,7 +1025,7 @@ void myTexturedSolidCylinder(GLdouble radius, GLdouble height, GLint slices, GLi
 void drawRocket()
 {
     glPushMatrix();
-    
+
     // draw the cone shape (the peak)
     glPushMatrix();
     glColor3f(1.0, 1.0, 0.0);
@@ -1085,10 +1115,10 @@ void drawOctahedron() {
     for (int i = 0; i < 8; i++) {
         glTexCoord2fv(texCoords[faces[i][0]]);
         glVertex3fv(vertices[faces[i][0]]);
-        
+
         glTexCoord2fv(texCoords[faces[i][1]]);
         glVertex3fv(vertices[faces[i][1]]);
-        
+
         glTexCoord2fv(texCoords[faces[i][2]]);
         glVertex3fv(vertices[faces[i][2]]);
     }
@@ -1108,7 +1138,7 @@ void drawUFO(){
         // drawing the Sphere first
         //glColor3f(1.0f, 0.5f, 0.0f);
         glutSolidSphere(1.0, 100, 100);
-        glDisable(GL_TEXTURE_2D);  
+        glDisable(GL_TEXTURE_2D);
         glPopMatrix();
 
         glPushMatrix();
@@ -1204,32 +1234,16 @@ void drawOlympic(){
 
 }
 
-void myAnotherTexturedSolidCylinder(GLdouble radius, GLdouble height, GLint slices, GLint stacks)
-{
-    GLUquadricObj *quadric = gluNewQuadric();
-    gluQuadricDrawStyle(quadric, GLU_FILL); // Set draw style to fill
 
-    // Draw the bottom disk (lock)
-    gluDisk(quadric, 0.0, radius, slices, 1);
-
-    // Draw the cylinder body
-    gluCylinder(quadric, radius, radius, height, slices, stacks);
-
-    // Draw the top disk (lock)
-    glPushMatrix();
-    glTranslatef(0.0, 0.0, height);
-    gluDisk(quadric, 0.0, radius, slices, 1);
-    glPopMatrix();
-
-    gluDeleteQuadric(quadric);
-}
 
 void drawTrafficLight(){
     // drawing the base (cylinder)
     glPushMatrix();
     glColor3f(0.0, 0.0, 0.0);
     glRotatef(-90.0, 1.0, 0.0, 0.0);
-    myAnotherTexturedSolidCylinder(0.07, 2.8, 20, 20);
+    glEnable(GL_TEXTURE_2D); // Enable texture mapping
+    myTexturedSolidCylinder(0.07, 2.8, 20, 20, flag_texture);
+    glDisable(GL_TEXTURE_2D); // Disable texture mapping after drawing
     glPopMatrix();
 
 
@@ -1279,81 +1293,85 @@ void myDisplayFunc(void)
     glScalef(scaleX, scaleY, scaleZ);
 
     get_bg();
-    // renderElephant();
 
-    // drawing the satellite
-    glPushMatrix();
-    glTranslatef(5.0, 5.0, 0.0);
-    drawSatellite();
-    glPopMatrix();
-
-    // drawing the Door and Lock
-    glPushMatrix();
-    glTranslatef(-10.0, 0.0, 0.0);
-    drawDoor();
-    lockStructure();
-    glPopMatrix();
-
-    // drawing the table and chair
-    glPushMatrix();
-    glTranslatef(10.0, 0.0, 0.0);
-    // drawing table
-    tableDrawing();
-    // drawing chair
-    chairDrawing();
-    glPopMatrix();
-
+   // // renderElephant();
     // rendering tiger
-    // renderTiger();
+   // renderTiger();
 
-    // drawing the Star
-    glPushMatrix();
-    glTranslatef(-10.0, 5.0, 3.0);
-    glScalef(1.0, 1.0, 1.5);
-    drawStar();
-    glPopMatrix();
+    // // drawing the satellite
+    // glPushMatrix();
+    // glTranslatef(5.0, 5.0, 0.0);
+    // drawSatellite();
+    // glPopMatrix();
 
-    // drawing the Rocket
-    glPushMatrix();
-    glRotatef(-45, 1.0, 0.0, 0.0);
-    glScalef(0.2, 0.2, 0.2);
-    drawRocket();
-    glPopMatrix();
+    // // drawing the Door and Lock
+    // glPushMatrix();
+    // glTranslatef(-10.0, 0.0, 0.0);
+    // drawDoor();
+    // lockStructure();
+    // glPopMatrix();
 
-    // drawing the Octahedron
-    glPushMatrix();
-        glTranslatef(-20.0, 10.0, 0.0);
-        drawOctahedron();
-    glPopMatrix();
+    // // drawing the table and chair
+    // glPushMatrix();
+    // glTranslatef(10.0, 0.0, 0.0);
+    // // drawing table
+    // tableDrawing();
+    // // drawing chair
+    // chairDrawing();
+    // glPopMatrix();
 
-    // drawing UFO
-    glPushMatrix();
-        glTranslatef(-5.0, -6.0, 6.0);
-        drawUFO();
-    glPopMatrix();
 
-    // drawing Olympic Icon
-    glPushMatrix();
-        glTranslatef(-25.0, 0.0, 0.0);
-        drawOlympic();
-    glPopMatrix(); 
 
-    // drawing traffic light
-    glPushMatrix();
-    glTranslatef(-10.0, 10.0, 8.0);
-    drawTrafficLight();
-    glPopMatrix();
+    // // drawing the Star
+    // glPushMatrix();
+    // glTranslatef(-10.0, 5.0, 3.0);
+    // glScalef(1.0, 1.0, 1.5);
+    // drawStar();
+    // glPopMatrix();
 
-    // Render the axes
-    // MyModelAxis();
-    glPushMatrix();
-    glTranslatef(0.0, 0.0, 2.0);
-    drawSun();
-    glPopMatrix();
+    // // drawing the Rocket
+    // glPushMatrix();
+    // glRotatef(-45, 1.0, 0.0, 0.0);
+    // glScalef(0.2, 0.2, 0.2);
+    // drawRocket();
+    // glPopMatrix();
+
+    // // drawing the Octahedron
+    // glPushMatrix();
+    //     glTranslatef(-20.0, 10.0, 0.0);
+    //     drawOctahedron();
+    // glPopMatrix();
+
+    // // drawing UFO
+    // glPushMatrix();
+    //     glTranslatef(-5.0, -6.0, 6.0);
+    //     drawUFO();
+    // glPopMatrix();
+
+    // // drawing Olympic Icon
+    // glPushMatrix();
+    //     glTranslatef(-25.0, 0.0, 0.0);
+    //     drawOlympic();
+    // glPopMatrix();
+
+    // // drawing traffic light
+    // glPushMatrix();
+    // glTranslatef(-10.0, 10.0, 1.0);
+    // drawTrafficLight();
+    // glPopMatrix();
+
+    // // Render the axes
+  //  MyModelAxis();
+    // glPushMatrix();
+    // glTranslatef(0.0, 0.0, 2.0);
+    // drawSun();
+    // glPopMatrix();
 
     drawEarth();
 
     drawMars();
+
+    drawJupiter();
 
     glPopMatrix(); // Restore the matrix
 
@@ -1520,6 +1538,14 @@ void update(int value)
     if (_mars_angle_orbit > 360)
         _mars_angle_orbit -= 360;
 
+    _jupiter_angle_self += self_rotation_speed;
+    if (_jupiter_angle_self > 360)
+        _jupiter_angle_self -= 360;
+    
+    _jupiter_angle_orbit += 0.2f;
+    if (_jupiter_angle_orbit > 360)
+        _jupiter_angle_orbit -= 360;
+
     glutPostRedisplay();          // Request a redraw of the window
     glutTimerFunc(25, update, 0); // Reset the timer 25 miliseconds
 }
@@ -1557,7 +1583,7 @@ int main(int argc, char **argv)
     // std::string file_elephant= "D:\\__Ongoing Trimester\\Computer Graphics\\Projects\\Elephant\\elephant-point-cloud-text.ply";
     // parsePLY(file_elephant, vertices_elephant);
 
-    // Load the tiger
+//    Load the tiger
     // std::string file_tiger= "D:\\__Ongoing Trimester\\Computer Graphics\\Projects\\Tiger\\tiger-point-cloud-text.ply";
     // parsePLY(file_tiger, vertices_tiger);
 
