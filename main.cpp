@@ -38,7 +38,7 @@ int mouseX, mouseY;
 int size = 1000;
 static int day = 0;
 
-GLuint bg_texture, sun_texture, earth_texture, rect_texture, drawing_texture, table_texture;
+GLuint bg_texture, sun_texture, earth_texture, mars_texture, rect_texture, drawing_texture, table_texture;
 
 //--------------------------------------------------------------------------
 //Loading texture files, which can also be found at http://www.cppblog.com/doing5552/archive/2009/01/08/71532.aspx
@@ -157,12 +157,13 @@ GLuint LoadTexture(const char* filename)
 void init_LoadallTexture()
 {
     // D:\\__Ongoing Trimester\\Computer Graphics\\solar-system-redone\\pictures\\bg.bmp
-    sun_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\sol.bmp");
-    earth_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\terra.bmp");
-    bg_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\bg2.bmp");
-    rect_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\frontWall.bmp");
-    drawing_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\jupiter.bmp");
-    table_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\SideWalls.bmp");
+    sun_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\sun.bmp");
+    earth_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\earth.bmp");
+    mars_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\mars.bmp");
+    bg_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\mybg.bmp");
+    rect_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\frontWall.bmp");
+    drawing_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\draw.bmp");
+    table_texture = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\texture_images\\SideWalls.bmp");
    // tflag = LoadTexture("D:\\__Ongoing Trimester\\Computer Graphics\\TheFinalProject\\flag-malaysia.bmp");
 }
 //--------------------------------------------------------------------------
@@ -216,12 +217,20 @@ void get_bg()
     glPopMatrix();
 }
 
+float _earth_angle_orbit = 0.0f;       // Earth's position in its orbit around the Sun
+float _earth_angle_self = 0.0f;  // Earth's self-rotation angle
+float dis_earth_sun = 4.0f;   // Distance from Earth to Sun
+float _sun_angle_self = 0.0f;
+float _mars_angle_self = 0.0f;
+float dis_mars_sun = 6.0f;
+float _mars_angle_orbit = 0.0f;
 
-void get_sun()
+void drawSun()
 {
     glPushMatrix();
-    //glRotatef(day/25.0*360, 0.0, 0.0, -1.0);
-   // glTranslatef(10.0f, 10.0f, -20.0f);
+    
+    glRotatef(_sun_angle_self, 0.0, 1.0, 0.0);
+
     {
         GLfloat sun_light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
         GLfloat sun_light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -265,31 +274,17 @@ void get_sun()
     glPopMatrix();
 }
 
-float _angle_earth = 30.0; 
 
-void get_earth()
+void drawEarth()
 {
 
     glPushMatrix();
-    glRotatef(_angle_earth, 0.0f, 1.0f, 0.0f);
-   // glRotatef(day / 360.0 * 360, 0.0f, 0.0f, -1.0f);
-  //  glTranslatef(3 * Distance, 0.0f, 0.0f);
+    glRotatef(_earth_angle_orbit, 0.0, 1.0, 0.0);
 
-    // {
-    //     GLfloat earth_mat_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    //     GLfloat earth_mat_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    //     GLfloat earth_mat_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    //     GLfloat earth_mat_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    //     GLfloat earth_mat_shininess = 0.0f;
+    glTranslatef(dis_earth_sun, 0.0, 0.0);
 
-    //     glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat_ambient);
-    //     glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat_diffuse);
-    //     glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat_specular);
-    //     glMaterialfv(GL_FRONT, GL_EMISSION, earth_mat_emission);
-    //     glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-    //     /*glutSolidSphere(15945000, 20, 20);*/
+    glRotatef(_earth_angle_self, 0.0, 1.0, 0.0);
 
-    // }
     GLUquadricObj* sphere = NULL;
     sphere = gluNewQuadric();
     glEnable(GL_TEXTURE_2D);
@@ -303,6 +298,30 @@ void get_earth()
     //glDisable(GL_LIGHT0);
     //glDisable(GL_LIGHTING);
     glPopMatrix();
+}
+
+void drawMars()
+{
+
+    glPushMatrix();
+    
+    glRotatef(_mars_angle_orbit, 0.0, 1.0, 0.0);
+    
+    glTranslatef(dis_mars_sun, 0.0, 0.0);
+    glRotatef(_mars_angle_self, 0.0, 1.0, 0.0);
+
+    GLUquadricObj* sphere = NULL;
+    sphere = gluNewQuadric();
+    glEnable(GL_TEXTURE_2D);
+    gluQuadricDrawStyle(sphere, GLU_FILL);
+
+    glBindTexture(GL_TEXTURE_2D, mars_texture);
+    gluQuadricTexture(sphere, GL_TRUE);
+    gluQuadricNormals(sphere, GLU_SMOOTH);
+    gluSphere(sphere, 0.2, 100, 20);
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
 }
 
 
@@ -755,7 +774,7 @@ void myDisplayFunc(void)
         //renderElephant();
 
         glPushMatrix();
-            glTranslatef(5.0, 5.0, 0.0); 
+            glTranslatef(5.0, 5.0, 0.0);
             drawSatellite();
         glPopMatrix();
 
@@ -776,23 +795,18 @@ void myDisplayFunc(void)
         //MyModelAxis();
         glPushMatrix();
             glTranslatef(0.0, 0.0, 2.0);
-            get_sun();
+            drawSun();
         glPopMatrix();
 
-        get_earth();
+        drawEarth();
+
+        drawMars();
 
     glPopMatrix(); // Restore the matrix
 
     glutSwapBuffers();
 }
 
-// //Here the timing function is used to control the speed of frame rate
-// void timerProc(int id)
-// {
-//     ++day;
-//     glutPostRedisplay();
-//     glutTimerFunc(50, timerProc, 1);//The first parameter is depend on your own device
-// }
 
 
 //--------------------------------------------------------------------------
@@ -910,14 +924,25 @@ void myMotionFunc(int x, int y)
     }
 }
 //--------------------------------------------------------------------------
+// Update the Earth's angles
 void update(int value) {
-	_angle_earth += 2.0f;
-	if (_angle_earth > 360) {
-		_angle_earth -= 360;
-	}
+    _earth_angle_orbit += 0.5f;  // Adjust this to change Earth's orbital speed
+    if (_earth_angle_orbit > 360) _earth_angle_orbit -= 360;
 
-	glutPostRedisplay(); ////Tell GLUT that the scene has changed
-	glutTimerFunc(25, update, 0);
+    _earth_angle_self += 1.0f;  // Adjust this to change Earth's self-rotation speed
+    if (_earth_angle_self > 360) _earth_angle_self -= 360;
+
+    _sun_angle_self += 1.0f;
+    if (_sun_angle_self > 360) _sun_angle_self -= 360;
+
+    _mars_angle_self += 0.8f;
+    if (_mars_angle_self > 360) _mars_angle_self -= 360;
+
+    _mars_angle_orbit += 0.3f;
+    if (_mars_angle_orbit > 360) _mars_angle_orbit -= 360;
+    
+    glutPostRedisplay(); // Request a redraw of the window
+    glutTimerFunc(25, update, 0);  // Reset the timer 25 miliseconds
 }
 
 
