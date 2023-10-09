@@ -1,8 +1,10 @@
-//--------------------------------------------
-// Lab: Lego
-//--------------------------------------------
+// Group 9
+// SHAON, TANZIR AHMED (1201303219)
+// SHAILY, FAHIMA HASSAN (1201303220)
+// AHMED SOBHI RAMADAN IBRAHIM ALI BAKAR (1211305402)
 #include <GL\glut.h>
 #include <math.h>
+#include <iostream>
 #include <stdlib.h>
 #include <vector>
 #include <fstream>
@@ -37,6 +39,8 @@ static bool mouseRotationMode = false;
 int mouseX, mouseY;
 int size = 1000;
 static int day = 0;
+
+bool isFogEnabled = false;
 
 GLuint bg_texture, sun_texture, earth_texture, mars_texture, rect_texture, drawing_texture, table_texture;
 
@@ -391,6 +395,23 @@ void myInit(void)
     gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
 
     glEnable(GL_DEPTH_TEST);
+
+    // Fog setup
+    GLfloat fogColor[] = {0.5f, 0.5f, 0.5f, 1.0f};  // Grey fog
+    glFogi(GL_FOG_MODE, GL_LINEAR);                 // The fog Mode
+    glFogfv(GL_FOG_COLOR, fogColor);                // Set The fog color
+    glFogf(GL_FOG_DENSITY, 0.35f);                  // Set the fog density (for exponential modes)
+    glHint(GL_FOG_HINT, GL_DONT_CARE);              // Fog hint value
+    glFogf(GL_FOG_START, 5.0f);                     // Fog start distance (for linear mode)
+    glFogf(GL_FOG_END, 50.0f);                      // Fog end distance (for linear mode)
+
+    if (isFogEnabled)
+    {
+        glEnable(GL_FOG);
+    }
+    else{
+        glDisable(GL_FOG);
+    }
 }
 //--------------------------------------------------------------------------
 void MyModelAxis(void)
@@ -823,13 +844,28 @@ void myKeyboardFunc(unsigned char key, int x, int y)
 {
     switch (key)
     {
+    
+    case 'I':
     case 'i':
         self_rotation_speed += 0.3;
         break;
+    case 'D':
     case 'd':
         self_rotation_speed -= 0.3;
         if (self_rotation_speed < 0.1f)  // Avoid negative speeds
             self_rotation_speed = 0.1f;
+        break;
+    case 'F':
+    case 'f':
+        isFogEnabled = !isFogEnabled;
+        if (isFogEnabled)
+        {
+            glEnable(GL_FOG);
+        }
+        else
+        {
+            glDisable(GL_FOG);
+        }
         break;
     case 27:
         exit(1);
@@ -954,9 +990,33 @@ void update(int value) {
     glutTimerFunc(25, update, 0);  // Reset the timer 25 miliseconds
 }
 
+void displayUserGuide() {
+    std::cout << "=================== User Guide ===================" << std::endl;
+    std::cout << std::endl;
+
+    // Keyboard instructions
+    std::cout << "Keyboard:" << std::endl;
+    std::cout << "Press 'i' to Increase Self Rotation Speed of the Planets." << std::endl;
+    std::cout << "Press 'j' to Decrease Self Rotation Speed of the Planets." << std::endl;
+    std::cout << "Press 'f' to toggle fog." << std::endl;
+    std::cout << std::endl;
+
+    // Mouse instructions
+    std::cout << "Mouse:" << std::endl;
+    std::cout << "Left Button: Rotate the scene." << std::endl; // Example, replace with actual functionality
+    std::cout << "Middle Button: Pan the scene." << std::endl; // Example, replace with actual functionality
+    std::cout << "Right Button: Zoom in/out." << std::endl;    // Example, replace with actual functionality
+    std::cout << std::endl;
+
+    // Exiting the program
+    std::cout << "Press ESC to escape." << std::endl;
+    std::cout << std::endl;
+    std::cout << "=================================================" << std::endl;
+}
 
 int main(int argc, char **argv)
 {
+    displayUserGuide();
 
     // Load the elephant
     // std::string file_elephant= "D:\\__Ongoing Trimester\\Computer Graphics\\Projects\\Elephant\\elephant-point-cloud-text.ply";
