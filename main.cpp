@@ -1,7 +1,3 @@
-// Group 9
-// SHAON, TANZIR AHMED (1201303219)
-// SHAILY, FAHIMA HASSAN (1201303220)
-// AHMED SOBHI RAMADAN IBRAHIM ALI BAKAR (1211305402)
 #include <windows.h>
 #include <GL\glut.h>
 #include <iostream>
